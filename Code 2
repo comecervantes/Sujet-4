@@ -1,0 +1,52 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+g = 9.81
+R = 1
+tmin = 0
+tmax = 10
+n = 10000
+h = (tmax - tmin) / n
+Wo = np.sqrt(g / R)
+I = np.linspace(tmin, tmax, n)
+Angle_initial = np.pi / 20
+vitesse_initiale = 0
+
+
+def func_avec_aprox(t):
+    return Angle_initial * np.cos(Wo * t)
+
+
+Angle1 = [func_avec_aprox(I)]
+
+
+def F(t):
+    return -(g / R) * np.sin(func_avec_aprox(t))
+
+
+def Methode_euler():
+    angles = [0] * n
+    angles[0] = Angle_initial
+    t = tmin
+    vitesse = [0] * n
+    vitesse[0] = vitesse_initiale
+    i = 0
+    while i < n - 1:
+        t += h
+        vitesse[i + 1] = vitesse[i] + h * F(t)
+        angles[i + 1] = angles[i] + h * vitesse[i + 1]
+        i += 1
+    return angles
+
+
+Angle2 = [Methode_euler()]
+
+plt.figure(figsize=(10, 6))
+plt.plot(I, Angle1[0], label="Approximation", color='b')
+plt.plot(I, Angle2[0][:n], label="Sans approximation", color='r')
+plt.xlabel("Temps (s)")
+plt.ylabel("Angle (rad)")
+plt.title("Comparaison des solutions numériques et théoriques")
+plt.legend()
+plt.grid(True)
+plt.show()
