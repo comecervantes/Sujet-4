@@ -1,0 +1,47 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def pendule_petits_angles(theta0, L, g, t):
+    omega = np.sqrt(g/L)  # Fréquence angulaire
+    theta = theta0 * np.cos(omega * t)
+    return theta
+
+def pendule_complet(theta0, L, g, t):
+    theta = np.zeros_like(t)
+    theta[0] = theta0
+    omega = np.zeros_like(t)
+    omega[0] = 0
+
+    dt = t[1] - t[0]
+
+    for i in range(len(t) - 1):
+        omega[i + 1] = omega[i] - (g/L) * np.sin(theta[i]) * dt
+        theta[i + 1] = theta[i] + omega[i + 1] * dt
+
+    return theta
+
+# Paramètres du pendule
+theta0 = 0.2  # Amplitude initiale en radians
+L = 1.0  # Longueur de la balançoire en mètres
+g = 9.81  # Accélération due à la gravité en m/s^2
+
+# Temps
+dt = 0.01  # Intervalle de temps
+t = np.arange(0, 10, dt)  # Durée de simulation
+
+# Solution avec l'approximation des petits angles
+theta_petits_angles = pendule_petits_angles(theta0, L, g, t)
+
+# Solution sans l'approximation des petits angles
+theta_complet = pendule_complet(theta0, L, g, t)
+
+# Tracer les graphiques
+plt.figure(figsize=(10, 6))
+plt.plot(t, theta_petits_angles, label="Approximation des petits angles", color='b')
+plt.plot(t, theta_complet, label="Sans approximation", color='r')
+plt.xlabel("Temps (s)")
+plt.ylabel("Position angulaire (radians)")
+plt.title("Comparaison des solutions du pendule")
+plt.legend()
+plt.grid(True)
+plt.show()
